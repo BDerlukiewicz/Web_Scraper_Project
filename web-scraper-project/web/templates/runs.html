@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Historia uruchomień</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <h1>Historia uruchomień</h1>
+
+            <nav class="nav">
+                <a href="/">Panel</a>
+                <a href="/books">Książki</a>
+                <a href="/runs">Historia uruchomień</a>
+                <a href="/export/books.csv">Eksport CSV</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        {% if runs %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nr</th>
+                        <th>Run ID</th>
+                        <th>Status</th>
+                        <th>Start</th>
+                        <th>Koniec</th>
+                        <th>Strony</th>
+                        <th>Książki znalezione</th>
+                        <th>Książki zapisane</th>
+                        <th>Procesy</th>
+                        <th>Limit połączeń</th>
+                        <th>Błąd</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for run in runs %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ run.run_id }}</td>
+                        <td>
+                            {% if run.status == "success" %}
+                            <span class="status status-success">success</span>
+                            {% else %}
+                            <span class="status status-failed">failed</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ run.started_at }}</td>
+                        <td>{{ run.finished_at }}</td>
+                        <td>{{ run.pages_requested }}</td>
+                        <td>{{ run.books_found }}</td>
+                        <td>{{ run.books_inserted }}</td>
+                        <td>{{ run.processes_count }}</td>
+                        <td>{{ run.concurrency_limit }}</td>
+                        <td>
+                            {% if run.error_message %}
+                            <span class="error-text">{{ run.error_message }}</span>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            Brak uruchomień scrapera.
+        </div>
+        {% endif %}
+    </main>
+</body>
+
+</html>

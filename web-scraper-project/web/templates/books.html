@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Lista książek</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <h1>Lista książek</h1>
+
+            <nav class="nav">
+                <a href="/">Panel</a>
+                <a href="/books">Książki</a>
+                <a href="/runs">Historia uruchomień</a>
+                <a href="/export/books.csv">Eksport CSV</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="actions">
+            <a class="button" href="/export/books.csv">Eksportuj dane do CSV</a>
+        </div>
+
+        {% if books %}
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nr</th>
+                        <th>Tytuł</th>
+                        <th>Cena</th>
+                        <th>Waluta</th>
+                        <th>Dostępność</th>
+                        <th>Ocena</th>
+                        <th>Źródło</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <a href="{{ book.basic_data.detail_url }}" target="_blank">
+                                {{ book.basic_data.title }}
+                            </a>
+                        </td>
+                        <td>{{ book.price_data.amount }}</td>
+                        <td>{{ book.price_data.currency }}</td>
+                        <td>{{ book.availability_data.status }}</td>
+                        <td>{{ book.rating_data.rating_value }}</td>
+                        <td>
+                            <a href="{{ book.metadata.source_url }}" target="_blank">
+                                strona
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty">
+            Brak danych w bazie. Najpierw uruchom scraper.
+        </div>
+        {% endif %}
+    </main>
+</body>
+
+</html>

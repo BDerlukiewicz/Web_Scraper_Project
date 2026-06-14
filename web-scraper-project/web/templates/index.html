@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Web Scraper Project</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <h1>Web Scraper Project</h1>
+
+            <nav class="nav">
+                <a href="/">Panel</a>
+                <a href="/books">Książki</a>
+                <a href="/runs">Historia uruchomień</a>
+                <a href="/export/books.csv">Eksport CSV</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        <section class="card">
+            <h2>Podsumowanie</h2>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <span class="stat-label">Książki w bazie</span>
+                    <span class="stat-value">{{ books_count }}</span>
+                </div>
+
+                {% if last_run %}
+                <div class="stat-box">
+                    <span class="stat-label">Ostatni status</span>
+                    <span class="stat-value">{{ last_run.status }}</span>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-label">Ostatnio zapisano</span>
+                    <span class="stat-value">{{ last_run.books_inserted }}</span>
+                </div>
+                {% else %}
+                <div class="stat-box">
+                    <span class="stat-label">Ostatni status</span>
+                    <span class="stat-value">brak</span>
+                </div>
+
+                <div class="stat-box">
+                    <span class="stat-label">Ostatnio zapisano</span>
+                    <span class="stat-value">0</span>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Uruchom scraper</h2>
+
+            <form action="/run-scraper" method="post">
+                <div class="form-grid">
+                    <div>
+                        <label for="pages">Liczba stron</label>
+                        <input id="pages" type="number" name="pages" value="5" min="1" max="50">
+                    </div>
+
+                    <div>
+                        <label for="concurrency">Limit połączeń</label>
+                        <input id="concurrency" type="number" name="concurrency" value="5" min="1" max="20">
+                    </div>
+
+                    <div>
+                        <label for="processes">Liczba procesów</label>
+                        <input id="processes" type="number" name="processes" value="4" min="1" max="16">
+                    </div>
+                </div>
+
+                <br>
+
+                <button type="submit">Uruchom scraper</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Ostatnie uruchomienie</h2>
+
+            {% if last_run %}
+            <p>Status:
+                {% if last_run.status == "success" %}
+                <span class="status status-success">success</span>
+                {% else %}
+                <span class="status status-failed">failed</span>
+                {% endif %}
+            </p>
+
+            <p>Start: {{ last_run.started_at }}</p>
+            <p>Koniec: {{ last_run.finished_at }}</p>
+            <p>Liczba stron: {{ last_run.pages_requested }}</p>
+            <p>Znaleziono książek: {{ last_run.books_found }}</p>
+            <p>Zapisano książek: {{ last_run.books_inserted }}</p>
+
+            {% if last_run.error_message %}
+            <p class="error-text">Błąd: {{ last_run.error_message }}</p>
+            {% endif %}
+            {% else %}
+            <p>Brak historii uruchomień.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+
+</html>
